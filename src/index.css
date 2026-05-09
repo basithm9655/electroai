@@ -1,0 +1,111 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html, body, #root {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background-color: #060912;
+    color: #e2e8f0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(100,116,139,0.3); border-radius: 2px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(100,116,139,0.5); }
+
+  /* Selection */
+  ::selection { background: rgba(0,212,240,0.25); color: white; }
+}
+
+@layer components {
+  .glass-panel {
+    @apply bg-surface-100/80 backdrop-blur-xl border border-white/5;
+  }
+
+  .neon-btn {
+    @apply border border-neon-400/40 text-neon-400 bg-neon-400/10
+           hover:bg-neon-400/20 shadow-neon-sm transition-all duration-150
+           rounded-lg px-3 py-1.5 text-xs font-semibold;
+  }
+
+  .ghost-btn {
+    @apply border border-white/8 text-slate-400 hover:text-white hover:bg-white/6
+           transition-all duration-150 rounded-lg px-3 py-1.5 text-xs font-medium;
+  }
+
+  .property-input {
+    @apply w-full bg-white/5 border border-white/8 rounded-lg px-3 py-1.5
+           text-xs text-slate-300 placeholder-slate-600
+           focus:outline-none focus:border-neon-400/40 focus:bg-white/8
+           transition-all duration-150;
+  }
+
+  .canvas-bg {
+    background-color: #060912;
+    background-image:
+      radial-gradient(ellipse at 20% 50%, rgba(0, 212, 240, 0.05) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 20%, rgba(139, 92, 246, 0.05) 0%, transparent 50%),
+      linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 20px 20px, 20px 20px;
+    background-position: center;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold border;
+  }
+
+  .badge-neon   { @apply badge bg-neon-400/10 border-neon-400/25 text-neon-400; }
+  .badge-violet { @apply badge bg-violet-500/10 border-violet-500/25 text-violet-300; }
+  .badge-emerald{ @apply badge bg-emerald-500/10 border-emerald-500/25 text-emerald-400; }
+  .badge-rose   { @apply badge bg-rose-500/10 border-rose-500/25 text-rose-400; }
+}
+
+@layer utilities {
+  .scrollbar-thin { scrollbar-width: thin; }
+  .scrollbar-none { scrollbar-width: none; }
+  .scrollbar-none::-webkit-scrollbar { display: none; }
+
+  .text-gradient-neon {
+    background: linear-gradient(135deg, #00d4f0, #38bdf8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .border-glass { border-color: rgba(255,255,255,0.06); }
+
+  .animate-wire-flow {
+    animation: wireFlow 1s linear infinite;
+  }
+
+  @keyframes wireFlow {
+    from { stroke-dashoffset: 16; }
+    to { stroke-dashoffset: 0; }
+  }
+}
+
+/* PWA safe areas */
+@supports (padding: env(safe-area-inset-top)) {
+  .safe-top    { padding-top: env(safe-area-inset-top); }
+  .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+}
+
+/* Touch improvements */
+@media (pointer: coarse) {
+  button, [role="button"] { min-height: 36px; min-width: 36px; }
+}
