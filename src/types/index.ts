@@ -37,6 +37,7 @@ export type ComponentCategory =
   | 'ic'
   | 'display'
   | 'input'
+  | 'output'
   | 'sensor'
   | 'mcu';
 

@@ -39,7 +39,7 @@ Rules:
 }
 \`\`\`
 - If generating a completely new circuit, set "clear": true and put all components in "add.components".
-- Ensure component types match our library (e.g., 'battery', 'vdc', 'resistor', 'capacitor', 'npn', 'led', 'switch', 'buzzer', 'motor', 'relay', '555timer', etc.).
+- Ensure component types match our library (e.g., 'battery', 'vdc', 'resistor', 'capacitor', 'npn', 'led', 'switch', 'buzzer', 'motor', 'relay', '555timer', etc.).`;
 
 export interface GeminiMessage {
   role: 'user' | 'model';
