@@ -1,7 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { RotateCcw, RotateCw, Trash2, Copy, Lock, Tag, Sliders } from 'lucide-react';
+import { RotateCcw, RotateCw, Trash2, Copy, Lock, Tag, Sliders, X } from 'lucide-react';
 import { useCircuitStore } from '../../store/useCircuitStore';
+import { useIsMobile } from '../../hooks/useIsMobile';
 
 const Field: React.FC<{ label: string; children: React.ReactNode }> = ({ label, children }) => (
   <div className="space-y-1">
@@ -18,7 +19,8 @@ const Input: React.FC<React.InputHTMLAttributes<HTMLInputElement>> = (props) => 
 );
 
 export const PropertiesPanel: React.FC = () => {
-  const { components, selectedIds, updateComponent, removeComponents, duplicateComponents } = useCircuitStore();
+  const { components, selectedIds, updateComponent, removeComponents, duplicateComponents, toggleRightPanel } = useCircuitStore();
+  const isMobile = useIsMobile();
 
   const selected = components.filter((c) => selectedIds.includes(c.id));
   const single = selected.length === 1 ? selected[0] : null;
@@ -40,11 +42,16 @@ export const PropertiesPanel: React.FC = () => {
   return (
     <div className="h-full flex flex-col bg-surface-100/80 backdrop-blur-xl border-l border-white/5">
       {/* Header */}
-      <div className="p-3 border-b border-white/5">
+      <div className="p-3 border-b border-white/5 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Sliders size={13} className="text-neon-400" />
           <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest">Properties</h2>
         </div>
+        {isMobile && (
+          <button onClick={toggleRightPanel} className="p-1 rounded bg-white/5 hover:bg-white/10 text-slate-400">
+            <X size={14} />
+          </button>
+        )}
       </div>
 
       <div className="flex-1 overflow-y-auto p-3 space-y-4">

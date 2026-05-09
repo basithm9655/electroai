@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, ChevronRight, ChevronDown, GripVertical } from 'lucide-react';
+import { Search, ChevronRight, ChevronDown, GripVertical, X } from 'lucide-react';
 import { COMPONENT_LIBRARY, CATEGORY_META, searchComponents } from '../../services/componentLibrary';
 import type { ComponentDef, ComponentCategory } from '../../types';
 
@@ -38,17 +38,60 @@ const CategorySection: React.FC<{ category: ComponentCategory; components: Compo
   );
 };
 
+import { useCircuitStore } from '../../store/useCircuitStore';
+import { nanoid } from '../../utils/nanoid';
+import { snapPoint } from '../../utils/geometry';
+import type { CircuitComponent } from '../../types';
+import { useIsMobile } from '../../hooks/useIsMobile';
+
 const ComponentItem: React.FC<{ def: ComponentDef }> = ({ def }) => {
+  const { addComponent, setSelectedIds, canvas: { transform }, toggleLeftPanel } = useCircuitStore();
+  const isMobile = useIsMobile();
+
   const handleDragStart = (e: React.DragEvent) => {
     e.dataTransfer.setData('component-type', def.type);
     e.dataTransfer.effectAllowed = 'copy';
+  };
+
+  const handleClick = () => {
+    const id = nanoid();
+    // Find center of screen
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+    // Convert to canvas coordinates
+    const cx = (centerX - transform.x) / transform.zoom;
+    const cy = (centerY - transform.y) / transform.zoom;
+    const pos = snapPoint({ x: cx, y: cy }, 20);
+
+    const newComp: CircuitComponent = {
+      id, type: def.type,
+      position: { x: pos.x - def.defaultSize.width / 2, y: pos.y - def.defaultSize.height / 2 },
+      rotation: 0,
+      pins: def.pins,
+      properties: { ...def.defaultProperties },
+      label: def.label,
+      value: def.defaultProperties.value ?? '',
+      size: def.defaultSize,
+      selected: false,
+      locked: false,
+      zIndex: Date.now(),
+    };
+    
+    addComponent(newComp);
+    setSelectedIds([id]);
+    
+    // Auto-close sidebar on mobile
+    if (isMobile) {
+      toggleLeftPanel();
+    }
   };
 
   return (
     <div
       draggable
       onDragStart={handleDragStart}
-      className="flex items-center gap-2 px-2 py-2 rounded-lg hover:bg-neon-400/10 hover:border-neon-400/20 border border-transparent cursor-grab active:cursor-grabbing transition-all duration-150 group"
+      onClick={handleClick}
+      className="flex items-center gap-2 px-2 py-2 rounded-lg hover:bg-neon-400/10 hover:border-neon-400/20 border border-transparent cursor-pointer active:scale-95 transition-all duration-150 group"
       title={def.description}
     >
       <GripVertical size={10} className="text-slate-600 group-hover:text-slate-400 flex-shrink-0" />
@@ -66,6 +109,8 @@ const ComponentItem: React.FC<{ def: ComponentDef }> = ({ def }) => {
 export const ComponentSidebar: React.FC = () => {
   const [query, setQuery] = useState('');
   const [openCategories, setOpenCategories] = useState<Set<string>>(new Set(['power', 'passive']));
+  const { toggleLeftPanel } = useCircuitStore();
+  const isMobile = useIsMobile();
 
   const results = useMemo(() => searchComponents(query), [query]);
 
@@ -91,7 +136,14 @@ export const ComponentSidebar: React.FC = () => {
     <div className="h-full flex flex-col bg-surface-100/80 backdrop-blur-xl border-r border-white/5">
       {/* Header */}
       <div className="p-3 border-b border-white/5">
-        <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 px-1">Components</h2>
+        <div className="flex items-center justify-between mb-3 px-1">
+          <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest">Components</h2>
+          {isMobile && (
+            <button onClick={toggleLeftPanel} className="p-1 rounded bg-white/5 hover:bg-white/10 text-slate-400">
+              <X size={14} />
+            </button>
+          )}
+        </div>
         <div className="relative">
           <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
           <input

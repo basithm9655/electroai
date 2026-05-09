@@ -54,11 +54,10 @@ export const AppLayout: React.FC = () => {
             <motion.div
               key="left-panel"
               initial={{ width: 0, opacity: 0 }}
-              animate={{ width: SIDEBAR_W, opacity: 1 }}
+              animate={{ width: isMobile ? '100%' : SIDEBAR_W, opacity: 1 }}
               exit={{ width: 0, opacity: 0 }}
               transition={{ type: 'spring', damping: 30, stiffness: 400 }}
               className={`flex-shrink-0 overflow-hidden ${isMobile ? 'absolute z-30 h-full border-r border-white/10 bg-surface-100/90 backdrop-blur-md shadow-2xl' : ''}`}
-              style={{ width: SIDEBAR_W }}
             >
               <ComponentSidebar />
             </motion.div>
@@ -162,11 +161,10 @@ export const AppLayout: React.FC = () => {
             <motion.div
               key="right-panel"
               initial={{ width: 0, opacity: 0 }}
-              animate={{ width: PROPS_W, opacity: 1 }}
+              animate={{ width: isMobile ? '100%' : PROPS_W, opacity: 1 }}
               exit={{ width: 0, opacity: 0 }}
               transition={{ type: 'spring', damping: 30, stiffness: 400 }}
               className={`flex-shrink-0 overflow-hidden ${isMobile ? 'absolute right-0 z-30 h-full border-l border-white/10 bg-surface-100/90 backdrop-blur-md shadow-2xl' : ''}`}
-              style={{ width: PROPS_W }}
             >
               <PropertiesPanel />
             </motion.div>
