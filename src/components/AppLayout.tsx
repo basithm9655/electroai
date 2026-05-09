@@ -99,13 +99,13 @@ export const AppLayout: React.FC = () => {
                     Wiring Mode
                   </span>
                   <button 
-                    onClick={finishWire}
+                    onClick={() => finishWire()}
                     className="px-3 py-1.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[11px] font-bold hover:bg-emerald-500/30 transition-colors cursor-pointer"
                   >
                     Finish Wire
                   </button>
                   <button 
-                    onClick={cancelWire}
+                    onClick={() => cancelWire()}
                     className="px-3 py-1.5 rounded-full bg-rose-500/10 text-rose-300 text-[11px] font-bold hover:bg-rose-500/20 transition-colors cursor-pointer"
                   >
                     Cancel
