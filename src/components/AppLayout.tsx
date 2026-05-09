@@ -21,7 +21,7 @@ export const AppLayout: React.FC = () => {
   const {
     leftPanelOpen, rightPanelOpen, bottomPanelOpen,
     toggleLeftPanel, toggleRightPanel, toggleBottomPanel,
-    aiOpen,
+    aiOpen, wireInProgress, finishWire, cancelWire
   } = useCircuitStore();
 
   const [shortcutOpen, setShortcutOpen] = useState(false);
@@ -85,6 +85,35 @@ export const AppLayout: React.FC = () => {
 
             {/* Circuit Canvas */}
             <CircuitCanvas />
+
+            {/* Mobile/PC friendly wiring controls */}
+            <AnimatePresence>
+              {wireInProgress && (
+                <motion.div
+                  initial={{ y: -50, opacity: 0, x: '-50%' }}
+                  animate={{ y: 20, opacity: 1, x: '-50%' }}
+                  exit={{ y: -50, opacity: 0, x: '-50%' }}
+                  className="absolute top-0 left-1/2 z-30 flex items-center gap-2 p-2 bg-surface-200/90 backdrop-blur-md border border-white/10 rounded-full shadow-2xl"
+                >
+                  <span className="text-[11px] text-emerald-400 font-semibold px-2 animate-pulse flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-emerald-400" />
+                    Wiring Mode
+                  </span>
+                  <button 
+                    onClick={finishWire}
+                    className="px-3 py-1.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[11px] font-bold hover:bg-emerald-500/30 transition-colors cursor-pointer"
+                  >
+                    Finish Wire
+                  </button>
+                  <button 
+                    onClick={cancelWire}
+                    className="px-3 py-1.5 rounded-full bg-rose-500/10 text-rose-300 text-[11px] font-bold hover:bg-rose-500/20 transition-colors cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* AI Panel slide-over */}
             <AnimatePresence>

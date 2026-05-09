@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import type { Wire, Point } from '../../types';
 
 interface Props {
@@ -10,9 +11,7 @@ function pointsToPath(pts: Point[]): string {
   if (pts.length < 2) return '';
   let d = `M ${pts[0].x} ${pts[0].y}`;
   for (let i = 1; i < pts.length; i++) {
-    const prev = pts[i - 1];
     const curr = pts[i];
-    const mx = (prev.x + curr.x) / 2;
     d += ` L ${curr.x} ${curr.y}`;
   }
   return d;
@@ -35,11 +34,20 @@ const WireLayer: React.FC<Props> = ({ wires, wireInProgress }) => (
     {wires.map((wire) => {
       const path = orthogonalPath(wire.points);
       return (
-        <g key={wire.id}>
+        <motion.g key={wire.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
           {/* Glow */}
-          <path d={path} fill="none" stroke="rgba(0,212,240,0.2)" strokeWidth={6} strokeLinecap="round" />
+          <motion.path 
+            d={path} 
+            fill="none" 
+            stroke="rgba(0,212,240,0.2)" 
+            strokeWidth={6} 
+            strokeLinecap="round"
+            initial={{ pathLength: 0 }}
+            animate={{ pathLength: 1 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+          />
           {/* Wire */}
-          <path
+          <motion.path
             d={path}
             fill="none"
             stroke={wire.selected ? '#00d4f0' : '#38bdf8'}
@@ -48,15 +56,24 @@ const WireLayer: React.FC<Props> = ({ wires, wireInProgress }) => (
             strokeLinejoin="round"
             className={wire.animated ? 'animate-wire-flow' : ''}
             style={wire.animated ? { strokeDasharray: 8, strokeDashoffset: 0 } : {}}
+            initial={{ pathLength: 0 }}
+            animate={{ pathLength: 1 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
           />
           {/* Junction dots at endpoints */}
           {wire.points.length > 0 && (
             <>
-              <circle cx={wire.points[0].x} cy={wire.points[0].y} r={3} fill="#38bdf8" />
-              <circle cx={wire.points[wire.points.length - 1].x} cy={wire.points[wire.points.length - 1].y} r={3} fill="#38bdf8" />
+              <motion.circle 
+                cx={wire.points[0].x} cy={wire.points[0].y} r={3.5} fill="#38bdf8"
+                initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.2, type: "spring" }}
+              />
+              <motion.circle 
+                cx={wire.points[wire.points.length - 1].x} cy={wire.points[wire.points.length - 1].y} r={3.5} fill="#38bdf8"
+                initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.4, type: "spring" }}
+              />
             </>
           )}
-        </g>
+        </motion.g>
       );
     })}
 
@@ -66,10 +83,11 @@ const WireLayer: React.FC<Props> = ({ wires, wireInProgress }) => (
         <path
           d={orthogonalPath(wireInProgress.points)}
           fill="none"
-          stroke="rgba(0,212,240,0.5)"
+          stroke="rgba(0,212,240,0.6)"
           strokeWidth={2}
           strokeDasharray="6 4"
           strokeLinecap="round"
+          className="animate-pulse"
         />
         <circle
           cx={wireInProgress.points[wireInProgress.points.length - 1].x}
@@ -78,6 +96,14 @@ const WireLayer: React.FC<Props> = ({ wires, wireInProgress }) => (
           fill="rgba(0,212,240,0.4)"
           stroke="#00d4f0"
           strokeWidth={1.5}
+          className="animate-ping"
+          style={{ transformOrigin: `${wireInProgress.points[wireInProgress.points.length - 1].x}px ${wireInProgress.points[wireInProgress.points.length - 1].y}px` }}
+        />
+        <circle
+          cx={wireInProgress.points[wireInProgress.points.length - 1].x}
+          cy={wireInProgress.points[wireInProgress.points.length - 1].y}
+          r={4}
+          fill="#00d4f0"
         />
       </g>
     )}
